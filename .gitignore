@@ -1,0 +1,6 @@
+# targets
+/bin/
+/termiart
+
+# editor dotfiles/etc
+.vscode/
