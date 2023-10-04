@@ -8,6 +8,7 @@
 #include <png.h>
 
 #include <termiart/dots.h>
+#include <termiart/ascii.h>
 
 // reads png file to rgba buffer
 // error writes to 512 byte char buf
@@ -176,9 +177,11 @@ int main(int argc, char *argv[])
 
         // pattern
         case 'p':
-            // valid options: dots
+            // valid options: dots, ascii
             if (!strcmp(optarg, "dots"))
                 pattern = 0;
+            else if (!strcmp(optarg, "ascii"))
+                pattern = 1;
             else
             {
                 snprintf(error_buf, 512, "invalid pattern option %s\nvalid options: dots\n", optarg);
@@ -230,6 +233,9 @@ int main(int argc, char *argv[])
     // dot pattern
     case 0:
         dots_from_rgba(error_buf, output_file, input_rgba, width, height, color_opts);
+        break;
+    case 1:
+        ascii_from_rgba(error_buf, output_file, input_rgba, width, height, color_opts);
         break;
     }
 
