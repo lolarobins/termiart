@@ -333,22 +333,29 @@ uint8_t dots_from_rgba(char *error, FILE *stream, const uint8_t *rgba, uint32_t 
     uint8_t color_mode = 0, bold = 0;
 
     if (color_opts)
-    {
-        // truecolor
-        if (!strcmp(color_opts, "truecolor"))
-            color_mode = 1;
-        else if (!strcmp(color_opts, "truecolor-bold"))
+        for (int i = 0, len = 0;; i++)
         {
-            bold = 1;
-            color_mode = 1;
-        }
-        else
-        {
-            snprintf(error, 512, "invalid color option %s specified for dot patterns\nvalid options: truecolor, truecolor-bold\n", color_opts);
-            return 0;
-        }
-    }
+            if (color_opts[i] == '-' || color_opts[i] == '\0')
+            {
+                if (!strncmp(&color_opts[i - len], "truecolor", 9))
+                    color_mode = 1;
+                else if (!strncmp(&color_opts[i - len], "bold", 4))
+                    bold = 1;
+                else
+                {
+                    snprintf(error, 512, "invalid color option %s specified for dot patterns\nvalid options: truecolor, bold\n", color_opts);
+                    return 0;
+                }
 
+                if (color_opts[i] == '\0')
+                    break;
+                else
+                    len = 0;
+            }
+            else
+                len++;
+        }
+    
     // analyze in 2x4 chunks
     for (int y = 0; y < height; y += 4)
     {
